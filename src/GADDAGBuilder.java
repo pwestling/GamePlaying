@@ -12,11 +12,13 @@ public class GADDAGBuilder {
       File file = new File(args[0]);
       gaddag = buildGADDAG(new Scanner(file));
     }
-    System.out.println(gaddag);
+    // System.out.println("Prepping String...");
+    // System.out.println(gaddag);
+    System.out.println("Done!");
   }
   
   public static GADDAG buildGADDAG(Scanner words) {
-    GADDAG root = new GADDAG("root");
+    GADDAG root = new GADDAG('~');
     while (words.hasNext()) {
       String word = words.next();
       for (int i = 0; i < word.length(); i++ ) {
@@ -31,7 +33,7 @@ public class GADDAGBuilder {
   
   private static void buildGADDAGbranch(GADDAG root, String word) {
     for (int i = 0; i < word.length(); i++ ) {
-      root = root.putIfNull(String.valueOf(word.charAt(i)));
+      root = root.putIfNull(word.charAt(i));
     }
   }
   
