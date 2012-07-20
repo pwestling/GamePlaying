@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class GADDAGBuilder {
   
   public static void main(String[] args) throws FileNotFoundException {
+    long buildtime = System.currentTimeMillis();
     GADDAG rootMin = null;
     if (args.length == 0) {
       rootMin = buildGADDAG(new Scanner(System.in));
@@ -15,12 +16,13 @@ public class GADDAGBuilder {
       rootMin = buildGADDAG(new Scanner(file));
     }
     System.out.println("Done!");
+    System.out.println("Build time: " + (System.currentTimeMillis() - buildtime) / 1000.0);
     System.out.println("Nodes: " + GADDAG.idCounter);
     Scanner in = new Scanner(System.in);
     while (in.hasNext()) {
-      long time = System.currentTimeMillis();
+      long time = System.nanoTime();
       System.out.println(rootMin.contains(in.next()));
-      System.out.println("Query time: " + (System.currentTimeMillis() - time) / 1000000.0);
+      System.out.println("Query time: " + (System.nanoTime() - time));
     }
     
   }
