@@ -14,13 +14,13 @@ public class GADDAGBuilder {
       File file = new File(args[0]);
       rootMin = buildGADDAG(new Scanner(file));
     }
-    // System.out.println("Prepping String...");
-    // System.out.println(GADDAG);
     System.out.println("Done!");
     System.out.println("Nodes: " + GADDAG.idCounter);
     Scanner in = new Scanner(System.in);
     while (in.hasNext()) {
+      long time = System.currentTimeMillis();
       System.out.println(rootMin.contains(in.next()));
+      System.out.println("Query time: " + (System.currentTimeMillis() - time) / 1000000.0);
     }
     
   }

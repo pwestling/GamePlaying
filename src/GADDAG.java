@@ -56,22 +56,13 @@ public class GADDAG {
   }
   
   private boolean containsRecur(String query) {
-    System.out.println("query at node " + this.getID());
-    System.out.println(this);
     char c = query.charAt(0);
     if (query.length() == 1 && this.hasAsEnd(c)) {
-      System.out.println("query ends at node " + this.getID());
       return true;
     }
     GADDAG child = this.get(c);
     if (child != null) {
-      System.out.println("Passing query " + query.substring(1) + " to node " + child.getID());
       return child.containsRecur(query.substring(1));
-    }
-    if (query.length() == 1) {
-      System.out.println("Invalid termination");
-    } else {
-      System.out.println("Invalid transition");
     }
     return false;
   }
