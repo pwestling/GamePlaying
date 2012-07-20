@@ -7,13 +7,13 @@ public class GADDAG {
   GADDAG[] children;
   char[] transitions;
   char[] end;
-  int numChildren = 0;
-  int endSize = 0;
+  byte numChildren = 0;
+  byte endSize = 0;
   
   public GADDAG() {
-    children = new GADDAG[2];
-    transitions = new char[2];
-    end = new char[2];
+    children = new GADDAG[0];
+    transitions = new char[0];
+    end = new char[0];
     synchronized (idCounter) {
       id = idCounter;
       idCounter++ ;
