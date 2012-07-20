@@ -11,9 +11,9 @@ public class GADDAG {
   byte endSize = 0;
   
   public GADDAG() {
-    children = new GADDAG[0];
-    transitions = new byte[0];
-    end = new byte[0];
+    children = new GADDAG[1];
+    transitions = new byte[1];
+    end = new byte[1];
     synchronized (idCounter) {
       id = idCounter;
       idCounter++ ;
@@ -25,7 +25,7 @@ public class GADDAG {
     if (child == null) {
       children = ensureSpace(children, numChildren);
       transitions = ensureSpace(transitions, numChildren);
-      transitions[numChildren] = transitionChar;
+      transitions[numChildren] = charToByte(transitionChar);
       children[numChildren] = node;
       numChildren++ ;
       return node;
@@ -69,7 +69,7 @@ public class GADDAG {
   
   public void putEndSet(char endChar) {
     end = ensureSpace(end, endSize);
-    end[endSize] = endChar;
+    end[endSize] = charToByte(endChar);
     endSize++ ;
   }
   
@@ -77,9 +77,10 @@ public class GADDAG {
     return contains(end, endChar);
   }
   
-  private boolean contains(char[] array, char endChar) {
-    for (char c : array) {
-      if (c == endChar)
+  private boolean contains(byte[] array, char endChar) {
+    byte endByte = (byte) endChar;
+    for (byte b : array) {
+      if (b == endByte)
         return true;
     }
     return false;
@@ -90,7 +91,7 @@ public class GADDAG {
   }
   
   public char[] getTransitions() {
-    return Arrays.copyOf(transitions, numChildren);
+    return charsFromBytes(transitions);
   }
   
   private <T> T[] ensureSpace(T[] array, int insertionPoint) {
@@ -114,14 +115,18 @@ public class GADDAG {
   }
   
   public char[] getEndSet() {
-
+    return charsFromBytes(end);
   }
   
-  private charToByte(char[] chars) {
-    char[] out = new char[chars.length];
-    for (int i = 0; i < chars.length; i++ ) {
-      out[i] = chars[i];
+  private char[] charsFromBytes(byte[] bytes) {
+    char[] out = new char[bytes.length];
+    for (int i = 0; i < bytes.length; i++ ) {
+      out[i] = (char) bytes[i];
     }
     return out;
+  }
+  
+  private byte charToByte(char c) {
+    return (byte) (c & 0x00FF);
   }
 }
