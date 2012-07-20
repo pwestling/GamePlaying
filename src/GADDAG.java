@@ -5,15 +5,15 @@ public class GADDAG {
   public static Integer idCounter = 0;
   private final int id;
   GADDAG[] children;
-  char[] transitions;
-  char[] end;
+  byte[] transitions;
+  byte[] end;
   byte numChildren = 0;
   byte endSize = 0;
   
   public GADDAG() {
     children = new GADDAG[0];
-    transitions = new char[0];
-    end = new char[0];
+    transitions = new byte[0];
+    end = new byte[0];
     synchronized (idCounter) {
       id = idCounter;
       idCounter++ ;
@@ -101,7 +101,7 @@ public class GADDAG {
     
   }
   
-  private char[] ensureSpace(char[] array, int insertionPoint) {
+  private byte[] ensureSpace(byte[] array, int insertionPoint) {
     if (insertionPoint >= array.length) {
       return Arrays.copyOf(array, array.length * 2);
     }
@@ -114,6 +114,14 @@ public class GADDAG {
   }
   
   public char[] getEndSet() {
-    return Arrays.copyOf(end, endSize);
+
+  }
+  
+  private charToByte(char[] chars) {
+    char[] out = new char[chars.length];
+    for (int i = 0; i < chars.length; i++ ) {
+      out[i] = chars[i];
+    }
+    return out;
   }
 }
