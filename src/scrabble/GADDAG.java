@@ -1,3 +1,4 @@
+package scrabble;
 import java.util.Arrays;
 
 public class GADDAG {
