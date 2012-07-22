@@ -1,5 +1,8 @@
 package scrabble;
+
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GADDAG {
   
@@ -112,11 +115,19 @@ public class GADDAG {
   
   @Override
   public String toString() {
-    return id + " trans:" + Arrays.toString(this.getTransitions()) + " end:" + Arrays.toString(this.getEndSet());
+    return id + " trans:" + Arrays.toString(this.getTransitions()) + " end:" + Arrays.toString(this.getEnd());
   }
   
-  public char[] getEndSet() {
+  public char[] getEnd() {
     return charsFromBytes(end);
+  }
+  
+  public Set<Character> getEndSet() {
+    Set<Character> endSet = new HashSet<Character>();
+    for (char c : charsFromBytes(end)) {
+      endSet.add(c);
+    }
+    return endSet;
   }
   
   private char[] charsFromBytes(byte[] bytes) {

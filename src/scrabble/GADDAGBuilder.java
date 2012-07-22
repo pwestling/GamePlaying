@@ -1,4 +1,5 @@
 package scrabble;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,13 +9,14 @@ import java.util.Scanner;
 public class GADDAGBuilder {
   
   public static void main(String[] args) throws FileNotFoundException {
+    
     long buildtime = System.currentTimeMillis();
     GADDAG rootMin = null;
     if (args.length == 0) {
-      rootMin = buildGADDAG(new Scanner(System.in));
+      rootMin = buildGADDAGLarge(new Scanner(System.in));
     } else {
       File file = new File(args[0]);
-      rootMin = buildGADDAG(new Scanner(file));
+      rootMin = buildGADDAGLarge(new Scanner(file));
     }
     System.out.println("Done!");
     System.out.println("Build time: " + (System.currentTimeMillis() - buildtime) / 1000.0);
@@ -38,13 +40,15 @@ public class GADDAGBuilder {
         words.add("" + c + s);
       }
     }
-    for (char end : root.getEndSet()) {
+    for (char end : root.getEnd()) {
       words.add("" + end);
     }
     return words;
   }
   
-  public static GADDAG buildGADDAGmin(Scanner words) {
+  public static GADDAG buildGADDAG(Scanner words) {
+    System.out.println("Building GADDAG...");
+    System.out.flush();
     GADDAG root = new GADDAG();
     while (words.hasNext()) {
       GADDAG node = root;
@@ -65,10 +69,11 @@ public class GADDAGBuilder {
       }
       
     }
+    System.out.println("GADDAG done!");
     return root;
   }
   
-  public static GADDAG buildGADDAG(Scanner words) {
+  public static GADDAG buildGADDAGLarge(Scanner words) {
     GADDAG root = new GADDAG();
     while (words.hasNext()) {
       String word = words.next().trim();
