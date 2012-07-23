@@ -1,32 +1,24 @@
 package scrabble;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
-public class Move {
+public class Move implements Iterable<Play> {
   
-  List<Character> tiles;
-  List<Integer> iCoords;
-  List<Integer> jCoords;
+  ArrayList<Play> plays;
   int score;
   
   public Move() {
-    tiles = new ArrayList<Character>();
-    iCoords = new ArrayList<Integer>();
-    jCoords = new ArrayList<Integer>();
+    plays = new ArrayList<Play>();
     
   }
   
   public Move(Move other) {
-    this.tiles = new ArrayList<Character>(other.tiles);
-    this.iCoords = new ArrayList<Integer>(other.iCoords);
-    this.jCoords = new ArrayList<Integer>(other.jCoords);
+    this.plays = new ArrayList<Play>(other.plays);
   }
   
   public void addPlay(Character c, int i, int j) {
-    tiles.add(c);
-    iCoords.add(i);
-    jCoords.add(j);
+    plays.add(new Play(i, j, c));
   }
   
   public void setScore(int score) {
@@ -37,12 +29,36 @@ public class Move {
     return score;
   }
   
+  public int size() {
+    return plays.size();
+  }
+  
   @Override
   public String toString() {
     StringBuilder out = new StringBuilder();
-    for (int i = 0; i < tiles.size(); i++ ) {
-      out.append(tiles.get(i) + " " + iCoords.get(i) + " " + jCoords.get(i) + "\n");
+    for (Play p : plays) {
+      out.append(p.tile + " " + p.i + " " + p.j + "\n");
     }
     return out.toString();
   }
+  
+  @Override
+  public Iterator<Play> iterator() {
+    return plays.iterator();
+  }
+}
+
+class Play {
+  
+  public final int i;
+  public final int j;
+  public final Character tile;
+  
+  public Play(int i, int j, Character tile) {
+    super();
+    this.i = i;
+    this.j = j;
+    this.tile = tile;
+  }
+  
 }

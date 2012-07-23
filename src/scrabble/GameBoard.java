@@ -102,13 +102,13 @@ public class GameBoard {
     return false;
   }
   
-  public List<Move> computeMoves(List<Character> rack) {
+  public List<Move> computeMoves(List<Tile> rack) {
     ArrayList<Move> output = new ArrayList<Move>();
     for (int j = 0; j < height; j++ ) {
       for (int i = 0; i < width; i++ ) {
         if (get(i, j).isAnchor()) {
           GADDAG current = lexicon;
-          genMoves(0, i, j, output, new Move(), new ArrayList<Character>(rack), current, false);
+          genMoves(0, i, j, output, new Move(), new ArrayList<Tile>(rack), current, false);
         }
         
       }
@@ -122,7 +122,7 @@ public class GameBoard {
       int anchorj,
       ArrayList<Move> output,
       Move inMove,
-      ArrayList<Character> rack,
+      ArrayList<Tile> rack,
       GADDAG base,
       boolean offOfReverse) {
     
@@ -142,19 +142,19 @@ public class GameBoard {
       }
       goOn(offset, anchori, anchorj, l, output, move, rack, current, offOfReverse);
     } else if (!rack.isEmpty()) {
-      for (Character c : rack) {
-        if (c != Square.BLANK && get(anchori, anchorj + offset).legal(c)) {
-          log.fine("Trying out " + c + " at " + anchori + ":" + (anchorj + offset));
-          ArrayList<Character> newRack = new ArrayList<Character>(rack);
-          newRack.remove(c);
+      for (Tile tile : rack) {
+        if (tile != Tile.BLANK && get(anchori, anchorj + offset).legal(tile)) {
+          log.fine("Trying out " + tile + " at " + anchori + ":" + (anchorj + offset));
+          ArrayList<Tile> newRack = new ArrayList<Tile>(rack);
+          newRack.remove(tile);
           Move move = new Move(inMove);
           GADDAG current;
           if (offOfReverse) {
             current = base;
           } else {
-            current = base.get(c);
+            current = base.get(tile.character);
           }
-          goOn(offset, anchori, anchorj, c, output, move, newRack, current, offOfReverse);
+          goOn(offset, anchori, anchorj, tile.character, output, move, newRack, current, offOfReverse);
         } else {
           // implement blank tiles
         }
@@ -172,7 +172,7 @@ public class GameBoard {
       Character tile,
       ArrayList<Move> output,
       Move move,
-      ArrayList<Character> rack,
+      ArrayList<Tile> rack,
       GADDAG base,
       boolean offOfReverse) {
     
@@ -289,7 +289,7 @@ public class GameBoard {
       }
       current = current.get('@');
       if (current != null) {
-        get(i, j).getLegalSet().addAll(current.getEndSet());
+        get(i, j).addAllToLegal(current.getEndSet());
       }
       
     } else if (hasTile(i + 1, j)) {
@@ -305,9 +305,15 @@ public class GameBoard {
         }
         x-- ;
       }
-      get(i, j).getLegalSet().addAll(current.getEndSet());
+      get(i, j).addAllToLegal(current.getEndSet());
     }
     
+  }
+  
+  public void computeScore(Move move) {
+    for (Play play : move) {
+
+    }
   }
   
   public boolean isFliped() {
@@ -342,9 +348,9 @@ public class GameBoard {
     board.computeAnchors();
     board.computeCrossSets();
     Scanner in = new Scanner(System.in);
-    ArrayList<Character> rack = new ArrayList<Character>();
+    ArrayList<Tile> rack = new ArrayList<Tile>();
     while (in.hasNext("[a-zA-Z]")) {
-      rack.add(in.next("[a-zA-Z]").charAt(0));
+      rack.add(Tile.valueOf(in.next("[a-zA-Z]").charAt(0)));
     }
     List<Move> moves = board.computeMoves(rack);
     for (Move m : moves) {
@@ -359,11 +365,9 @@ class Square {
   
   private final int letterMultiplier;
   private final int wordMultiplier;
-  private Set<Character> legalSet;
-  private Character tile;
+  private Set<Tile> legalSet;
+  private Tile tile;
   private boolean isAnchor;
-  
-  public static final Character BLANK = '#';
   
   public static Square makeSquare(String code) {
     Square square = null;
@@ -387,8 +391,15 @@ class Square {
     throw new IllegalArgumentException("Invalid Code");
   }
   
+  public void addAllToLegal(Set<Character> endSet) {
+    for (Character c : endSet) {
+      legalSet.add(Tile.valueOf(c));
+    }
+    
+  }
+  
   public void addLegalSet(char c) {
-    this.getLegalSet().add(c);
+    this.getLegalSet().add(Tile.valueOf(c));
   }
   
   public Square() {
@@ -396,14 +407,14 @@ class Square {
   }
   
   public Square(int letterMultiplier, int wordMultiplier) {
-    this(letterMultiplier, wordMultiplier, new HashSet<Character>());
+    this(letterMultiplier, wordMultiplier, new HashSet<Tile>());
   }
   
-  public Square(int letterMultiplier, int wordMultiplier, Set<Character> legalSet) {
+  public Square(int letterMultiplier, int wordMultiplier, Set<Tile> legalSet) {
     this(letterMultiplier, wordMultiplier, legalSet, null);
   }
   
-  public Square(int letterMultiplier, int wordMultiplier, Set<Character> legalSet, Character tile) {
+  public Square(int letterMultiplier, int wordMultiplier, Set<Tile> legalSet, Character tile) {
     super();
     this.letterMultiplier = letterMultiplier;
     this.wordMultiplier = wordMultiplier;
@@ -421,7 +432,7 @@ class Square {
   }
   
   public Character getTile() {
-    return tile;
+    return tile.character;
   }
   
   public boolean hasTile() {
@@ -432,7 +443,7 @@ class Square {
     if (tile == null) {
       this.tile = null;
     } else {
-      this.tile = Character.toLowerCase(tile);
+      this.tile = Tile.valueOf(Character.toLowerCase(tile));
     }
   }
   
@@ -448,14 +459,21 @@ class Square {
     if (legalSet.isEmpty()) {
       return true;
     }
-    return legalSet.contains(c);
+    return legalSet.contains(Tile.valueOf(c));
   }
   
-  public Set<Character> getLegalSet() {
+  public boolean legal(Tile t) {
+    if (legalSet.isEmpty()) {
+      return true;
+    }
+    return legalSet.contains(t);
+  }
+  
+  public Set<Tile> getLegalSet() {
     return legalSet;
   }
   
-  public void setLegalSet(Set<Character> legalSet) {
+  public void setLegalSet(Set<Tile> legalSet) {
     this.legalSet = legalSet;
   }
   
