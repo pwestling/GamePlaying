@@ -3,6 +3,7 @@ package scrabble;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class GADDAG {
   
@@ -13,6 +14,8 @@ public class GADDAG {
   byte[] end;
   byte numChildren = 0;
   byte endSize = 0;
+  
+  public static Logger log = Logger.getLogger("GADDAG");
   
   public GADDAG() {
     children = new GADDAG[1];
@@ -45,6 +48,8 @@ public class GADDAG {
   public GADDAG get(char transitionChar) {
     for (int i = 0; i < numChildren; i++ ) {
       if (transitions[i] == transitionChar) {
+        log.fine("Going from node " + this.id + " to " + children[i].id);
+        log.fine(children[i].toString());
         return children[i];
       }
     }
@@ -56,10 +61,18 @@ public class GADDAG {
   }
   
   public boolean contains(String query) {
-    return containsRecur(query.charAt(0) + "@" + query.substring(1));
+    if (!query.matches(".*@.*")) {
+      return containsRecur(query.charAt(0) + "@" + query.substring(1));
+    } else {
+      return containsRecur(query);
+    }
   }
   
   private boolean containsRecur(String query) {
+    if (query.length() == 0) {
+      log.fine("possible prefix");
+      return false;
+    }
     char c = query.charAt(0);
     if (query.length() == 1 && this.hasAsEnd(c)) {
       return true;

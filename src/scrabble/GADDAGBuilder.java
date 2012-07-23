@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GADDAGBuilder {
   
@@ -13,14 +15,16 @@ public class GADDAGBuilder {
     long buildtime = System.currentTimeMillis();
     GADDAG rootMin = null;
     if (args.length == 0) {
-      rootMin = buildGADDAGLarge(new Scanner(System.in));
+      rootMin = buildGADDAG(new Scanner(System.in));
     } else {
       File file = new File(args[0]);
-      rootMin = buildGADDAGLarge(new Scanner(file));
+      rootMin = buildGADDAG(new Scanner(file));
     }
     System.out.println("Done!");
     System.out.println("Build time: " + (System.currentTimeMillis() - buildtime) / 1000.0);
     System.out.println("Nodes: " + GADDAG.idCounter);
+    Logger.getLogger("").addHandler(new SimpleHandler());
+    Logger.getLogger("").setLevel(Level.ALL);
     Scanner in = new Scanner(System.in);
     while (in.hasNext()) {
       long time = System.nanoTime();

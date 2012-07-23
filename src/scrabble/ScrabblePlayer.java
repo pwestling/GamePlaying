@@ -7,15 +7,13 @@ public class ScrabblePlayer {
   
   List<Character> rack;
   GameBoard board;
-  GADDAG lexicon;
   
   public static Map<Character, Integer> tileScores;
   
-  public ScrabblePlayer(List<Character> rack, GameBoard board, GADDAG lexicon) {
+  public ScrabblePlayer(List<Character> rack, GameBoard board) {
     super();
     this.rack = rack;
     this.board = board;
-    this.lexicon = lexicon;
   }
   
 }
